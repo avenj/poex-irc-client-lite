@@ -30,9 +30,6 @@ sub _start {
     server   => $server,
     nick     => $nickname,
     username => $username,
-    ipv6 => 1,
-    ssl  => 1,
-    port => '6697',
   )->connect()
 }
 

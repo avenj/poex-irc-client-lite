@@ -565,6 +565,28 @@ See L<POE::Component::IRC> for a more mature POE IRC client library.
     username  => $username,
   );
 
+Create a new Client::Lite instance. Optional arguments are:
+
+=over
+
+=item bindaddr
+
+Local address to bind to.
+
+=item ipv6
+
+Boolean value indicating whether to prefer IPv6.
+
+=item port
+
+Remote port to use (defaults to 6667).
+
+=item reconnect
+
+Reconnection attempt delay, in seconds.
+
+=back
+
 =head2 stop
 
   $irc->stop;
