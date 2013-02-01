@@ -363,7 +363,9 @@ sub send {
 sub _send {
   my ($kernel, $self) = @_[KERNEL, OBJECT];
   for my $outev (@_[ARG0 .. $#_]) {
-    $self->process( 'outgoing', $outev );
+    if ($self->process( 'outgoing', $outev ) == EAT_ALL) {
+      next
+    }
     $self->backend->send( $outev, $self->conn->wheel_id )
   }
 }
@@ -586,19 +588,19 @@ Methods that dispatch to IRC return C<$self>, so they can be chained:
     'hello there!'
   );
 
-=head3 connect
+=head2 connect
 
   $irc->connect;
 
 Attempt an outgoing connection.
 
-=head3 disconnect
+=head2 disconnect
 
   $irc->disconnect($message);
 
 Quit IRC and shut down the wheel.
 
-=head3 send
+=head2 send
 
   use IRC::Message::Object 'ircmsg';
   $irc->send(
@@ -625,19 +627,19 @@ HASH; this method will also take a list of events in either of those formats.
 Use C<send_raw_line()> to send a single raw IRC line. This is rarely a good
 idea; L<POEx::IRC::Backend> provides an IRCv3-capable filter.
 
-=head3 privmsg
+=head2 privmsg
 
   $irc->privmsg( $target, $string );
 
 Sends a PRIVMSG to the specified target.
 
-=head3 notice
+=head2 notice
 
   $irc->notice( $target, $string );
 
 Sends a NOTICE to the specified target.
 
-=head3 ctcp
+=head2 ctcp
 
   $irc->ctcp( $target, $type, @params );
 
@@ -645,42 +647,42 @@ Encodes and sends a CTCP B<request> to the target.
 (To send a CTCP B<reply>, send a L</notice> that has been quoted via
 L<IRC::Toolkit::CTCP/"ctcp_quote">.)
 
-=head3 mode
+=head2 mode
 
   $irc->mode( $channel, $modestring );
 
 Sends a MODE for the specified target.
 
-=head3 join
+=head2 join
 
   $irc->join( $channel );
 
 Attempts to join the specified channel.
 
-=head3 part
+=head2 part
 
   $irc->part( $channel, $message );
 
 Attempts to leave the specified channel with an optional PART message.
 
 
-=head1 IRC Events
+=head1 Emitted Events
 
 All IRC events are emitted as 'irc_$cmd' e.g. 'irc_005' (ISUPPORT) or
 'irc_mode' with a few notable exceptions, detailed below.
 
 C<$_[ARG0]> is the L<IRC::Message::Object>.
 
-=head3 irc_private_message
+=head2 irc_private_message
 
 Emitted for PRIVMSG-type messages not covered by L</irc_public_message>.
 
-=head3 irc_public_message
+=head2 irc_public_message
 
 Emitted for PRIVMSG-type messages that appear to be destined for a channel
 target.
 
-=head3 irc_ctcp
+=head2 irc_ctcp
 
 Emitted for incoming CTCP requests.
 
@@ -690,12 +692,39 @@ L<IRC::Toolkit::CTCP/ctcp_extract>.
 An example of sending a CTCP reply lives in L</SYNOPSIS>.
 See L<IRC::Toolkit::CTCP> for CTCP-related helpers.
 
-=head3 irc_ctcpreply
+=head2 irc_ctcpreply
 
 Emitted for incoming CTCP replies.
 
 Mirrors the behavior of L</irc_ctcp>
 
+=head1 Pluggable Events
+
+These are events explicitly dispatched to plugins 
+via L<MooX::Role::POE::Emitter/process>; 
+see L<MooX::Role::POE::Emitter> and L<MooX::Role::Pluggable> for more on
+making use of plugins.
+
+=head2 preregister
+
+Dispatched to plugins when an outgoing connection has been established, 
+but prior to registration.
+
+The first argument is the L<POEx::IRC::Backend::Connect> object.
+
+Returning EAT_ALL (see L<MooX::Role::Pluggable::Constants>) to Client::Lite
+will terminate the connection without registering.
+
+=head2 outgoing
+
+Dispatched to plugins prior to sending output.
+
+The first argument is the item being sent. Note that no sanity checks are
+performed on the item(s) at this stage (this is done after items are passed to
+the L<POEx::IRC::Backend> instance) -- your plugin's handler could receive a
+HASH, an L<IRC::Message::Object>, a raw line, or something invalid.
+
+Returning EAT_ALL will skip sending the item.
 
 =head1 SEE ALSO
 
