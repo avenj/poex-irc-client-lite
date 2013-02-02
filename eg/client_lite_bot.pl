@@ -7,7 +7,6 @@ my $server   = 'irc.cobaltirc.org';
 my @channels = ( '#eris', '#botsex' );
 
 use POE;
-use Data::Dumper;
 use IRC::Toolkit;
 use POEx::IRC::Client::Lite;
 
