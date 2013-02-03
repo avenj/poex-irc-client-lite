@@ -41,6 +41,8 @@ sub _start {
 
 sub shutdown {
   my ($k, $heap) = @_[KERNEL, HEAP];
+
+  $k->alarm_remove_all;
   ## FIXME shut down client and backend
 
   fail "Timed out" if $_[ARG0];
