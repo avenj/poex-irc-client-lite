@@ -28,7 +28,6 @@ has nick => (
   is        => 'ro',
   isa       => Str,
   writer    => 'set_nick',
-  ## FIXME auto-altnick
 );
 
 after set_nick => sub {
@@ -38,7 +37,6 @@ after set_nick => sub {
     $self->nick($nick)
   }
 };
-
 
 has bindaddr => (
   lazy      => 1,
@@ -252,6 +250,23 @@ sub ircsock_input {
 
 
 ### Our IRC-related handlers.
+
+sub N_irc_433 {
+  ## Nickname in use.
+  my (undef, $self) = splice @_, 0, 2;
+  my $ircev = ${ $_[0] };
+
+  my $taken = $ircev->params->[1] || $self->nick;
+
+  $self->send(
+    ircmsg(
+      command => 'nick',
+      params  => [ $taken . '_' ],
+    )
+  );
+
+  EAT_NONE
+}
 
 sub N_irc_ping {
   my (undef, $self) = splice @_, 0, 2;
