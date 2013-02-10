@@ -32,7 +32,7 @@ has nick => (
 
 after set_nick => sub {
   my ($self, $nick) = @_;
-  if ($self->has_conn && $self->conn->has_wheel) {
+  if ($self->_has_conn && $self->conn->has_wheel) {
     ## Try to change IRC nickname as well.
     $self->nick($nick)
   }
@@ -359,10 +359,11 @@ sub _disconnect {
     ircmsg(
       command => 'quit',
       params  => [ $message ],
-    )
+    ),
+    $self->conn->wheel_id
   );
   $self->backend->disconnect( $self->conn->wheel->ID )
-    if $self->has_conn and $self->conn->has_wheel;
+    if $self->_has_conn and $self->conn->has_wheel;
 }
 
 sub send_raw_line {

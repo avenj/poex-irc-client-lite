@@ -18,6 +18,7 @@ my $expected = {
   'client got public_msg'   => 1,
   'client got ctcp_version' => 1,
   'client sent arbitrary'   => 1,
+  'client sent QUIT'        => 1,
 };
 
 alarm 60;
@@ -36,6 +37,8 @@ POE::Session->create(
       client_irc_snack
       client_irc_public_msg
       client_irc_ctcp_version
+
+      send_quit
     / ],
   ],
 );
@@ -160,8 +163,11 @@ sub ircsock_input {
   if ($ev->command eq 'NONSENSE') {
     $got->{'client sent arbitrary'}++;
   }
-}
 
+  if (uc($ev->command) eq 'QUIT') {
+    $got->{'client sent QUIT'}++;
+  }
+}
 
 
 ### our client's events -> 
@@ -194,9 +200,14 @@ sub client_irc_ctcp_version {
   my $ev = $_[ARG0];
 
   $got->{'client got ctcp_version'}++;
+  $k->delay( 'send_quit' => 1 );
 }
 
-## FIXME test a disconnect/quit
+sub send_quit {
+  my ($k, $heap) = @_[KERNEL, HEAP];
+  $heap->{client}->disconnect('bye');
+}
+
 
 for my $t (keys %$expected) {
   ok( defined $got->{$t}, "have result for '$t'" );
