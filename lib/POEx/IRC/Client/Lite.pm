@@ -354,7 +354,8 @@ sub disconnect {
 
 sub _disconnect {
   my ($kernel, $self) = @_[KERNEL, OBJECT];
-  my $message = $_[ARG0];
+  my $message = $_[ARG0] // 'Leaving';
+
   $self->backend->send(
     ircmsg(
       command => 'quit',
@@ -368,6 +369,7 @@ sub _disconnect {
 
 sub send_raw_line {
   my ($self, $line) = @_;
+  confess "Expected a raw line" unless defined $line;
   $self->send( ircmsg(raw_line => $line) );
 }
 

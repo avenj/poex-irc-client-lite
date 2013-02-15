@@ -184,6 +184,8 @@ sub client_irc_snack {
       command => 'nonsense',
     }
   );
+
+  ## FIXME test sending modes as both string and IRC::Mode::Set
 }
 
 ## pubmsg parser:
