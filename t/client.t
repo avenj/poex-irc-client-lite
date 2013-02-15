@@ -164,7 +164,7 @@ sub ircsock_input {
     $got->{'client sent arbitrary'}++;
   }
 
-  if (uc($ev->command) eq 'QUIT') {
+  if ($ev->command eq 'QUIT') {
     $got->{'client sent QUIT'}++;
   }
 }

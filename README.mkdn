@@ -168,6 +168,12 @@ HASH; this method will also take a list of events in either of those formats.
 Use `send_raw_line()` to send a single raw IRC line. This is rarely a good
 idea; [POEx::IRC::Backend](http://search.cpan.org/perldoc?POEx::IRC::Backend) provides an IRCv3-capable filter.
 
+## set\_nick
+
+    $irc->set_nick( $new_nick );
+
+Attempt to change the current nickname.
+
 ## privmsg
 
     $irc->privmsg( $target, $string );

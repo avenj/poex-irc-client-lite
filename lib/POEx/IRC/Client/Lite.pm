@@ -15,6 +15,9 @@ use IRC::Toolkit::CTCP;
 
 use POE::Filter::IRCv3;
 
+use MooX::Role::Pluggable::Constants;
+with 'MooX::Role::POE::Emitter';
+
 
 has server => (
   required  => 1,
@@ -129,9 +132,6 @@ has conn => (
   clearer   => '_clear_conn',
 );
 
-
-with 'MooX::Role::POE::Emitter';
-use MooX::Role::Pluggable::Constants;
 
 sub BUILD {
   my ($self) = @_;
@@ -444,14 +444,21 @@ sub mode {
 
 sub _mode {
   my ($kernel, $self)    = @_[KERNEL, OBJECT];
-  my ($target, $modestr) = @_[ARG0, ARG1];
-  ## FIXME genericize IRC::Server::Pluggable::IRC::Mode* classes
-  ##  move to IRC::Toolkit objs
-  ##  accept them here:
+  my ($target, $mode) = @_[ARG0, ARG1];
+
+  if (blessed $mode && $mode->isa('IRC::Mode::Set')) {
+    ## FIXME tests for same
+    ## FIXME accept an opt to allow passing in MODES= ?
+    for my $set ($mode->split_mode_set(4)) {
+      $self->mode( $target, $set->mode_string )
+    }
+    return
+  }
+
   $self->send(
     ircmsg(
       command => 'mode',
-      params  => [ $target, $modestr ],
+      params  => [ $target, $mode ],
     )
   )
 }
@@ -618,7 +625,7 @@ event:
   ## These are equivalent:
   $irc->send( $ircevent );
   $irc->yield( 'send', $ircevent );
-  $poe_kernel->post( $irc_session_id, 'send', $ircevent );
+  $poe_kernel->post( $irc->session_id, 'send', $ircevent );
 
 Methods that dispatch to IRC return C<$self>, so they can be chained:
 
@@ -665,6 +672,12 @@ HASH; this method will also take a list of events in either of those formats.
 
 Use C<send_raw_line()> to send a single raw IRC line. This is rarely a good
 idea; L<POEx::IRC::Backend> provides an IRCv3-capable filter.
+
+=head2 set_nick
+
+    $irc->set_nick( $new_nick );
+
+Attempt to change the current nickname.
 
 =head2 privmsg
 
@@ -736,7 +749,7 @@ See L<IRC::Toolkit::CTCP> for CTCP-related helpers.
 
 Emitted for incoming CTCP replies.
 
-Mirrors the behavior of L</irc_ctcp>
+Mirrors the behavior of L</irc_ctcp_TYPE>
 
 =head1 Pluggable Events
 
