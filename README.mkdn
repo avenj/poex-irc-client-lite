@@ -120,7 +120,7 @@ event:
     ## These are equivalent:
     $irc->send( $ircevent );
     $irc->yield( 'send', $ircevent );
-    $poe_kernel->post( $irc_session_id, 'send', $ircevent );
+    $poe_kernel->post( $irc->session_id, 'send', $ircevent );
 
 Methods that dispatch to IRC return `$self`, so they can be chained:
 
@@ -245,7 +245,7 @@ See [IRC::Toolkit::CTCP](http://search.cpan.org/perldoc?IRC::Toolkit::CTCP) for 
 
 Emitted for incoming CTCP replies.
 
-Mirrors the behavior of ["irc\_ctcp"](#irc\_ctcp)
+Mirrors the behavior of ["irc\_ctcp\_TYPE"](#irc\_ctcp\_TYPE)
 
 # Pluggable Events
 
