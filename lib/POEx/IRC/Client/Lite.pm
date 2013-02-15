@@ -18,6 +18,7 @@ use POE::Filter::IRCv3;
 use MooX::Role::Pluggable::Constants;
 with 'MooX::Role::POE::Emitter';
 
+use Scalar::Util 'blessed';
 
 has server => (
   required  => 1,
