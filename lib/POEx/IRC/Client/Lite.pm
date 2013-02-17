@@ -51,7 +51,7 @@ has bindaddr => (
   default   => sub {
     my ($self) = @_;
     return '::0' if $self->has_ipv6 and $self->ipv6;
-    return '0.0.0.0'
+    '0.0.0.0'
   },
 );
 
@@ -452,10 +452,12 @@ sub _mode {
   if (blessed $mode && $mode->isa('IRC::Mode::Set')) {
     ## FIXME tests for same
     ## FIXME accept an opt to allow passing in MODES= ?
+    ##       don't really want to parse/store isupport here
+    ##       (stateful subclasses should worry about it)
     for my $set ($mode->split_mode_set(4)) {
       $self->mode( $target, $set->mode_string )
     }
-    return
+    return $self
   }
 
   $self->send(
@@ -637,19 +639,19 @@ Methods that dispatch to IRC return C<$self>, so they can be chained:
     'hello there!'
   );
 
-=head2 connect
+=head3 connect
 
   $irc->connect;
 
 Attempt an outgoing connection.
 
-=head2 disconnect
+=head3 disconnect
 
   $irc->disconnect($message);
 
 Quit IRC and shut down the wheel.
 
-=head2 send
+=head3 send
 
   use IRC::Message::Object 'ircmsg';
   $irc->send(
@@ -673,28 +675,30 @@ Quit IRC and shut down the wheel.
 Use C<send()> to send an L<IRC::Message::Object> or a compatible
 HASH; this method will also take a list of events in either of those formats.
 
+=head3 send_raw_line
+
 Use C<send_raw_line()> to send a single raw IRC line. This is rarely a good
 idea; L<POEx::IRC::Backend> provides an IRCv3-capable filter.
 
-=head2 set_nick
+=head3 set_nick
 
     $irc->set_nick( $new_nick );
 
 Attempt to change the current nickname.
 
-=head2 privmsg
+=head3 privmsg
 
   $irc->privmsg( $target, $string );
 
 Sends a PRIVMSG to the specified target.
 
-=head2 notice
+=head3 notice
 
   $irc->notice( $target, $string );
 
 Sends a NOTICE to the specified target.
 
-=head2 ctcp
+=head3 ctcp
 
   $irc->ctcp( $target, $type, @params );
 
@@ -702,24 +706,43 @@ Encodes and sends a CTCP B<request> to the target.
 (To send a CTCP B<reply>, send a L</notice> that has been quoted via
 L<IRC::Toolkit::CTCP/"ctcp_quote">.)
 
-=head2 mode
+=head3 mode
 
   $irc->mode( $channel, $modestring );
 
 Sends a MODE for the specified target.
 
-=head2 join
+Takes a channel name as a string and a mode change as either a string or an
+L<IRC::Mode::Set>.
+
+=head3 join
 
   $irc->join( $channel );
 
 Attempts to join the specified channel.
 
-=head2 part
+=head3 part
 
   $irc->part( $channel, $message );
 
 Attempts to leave the specified channel with an optional PART message.
 
+=head2 Attributes
+
+=head3 conn
+
+The L<POEx::IRC::Backend::Connect> instance for our connection.
+
+=head3 nick
+
+The nickname we were spawned with.
+
+This class doesn't track nick changes; if our nick is changed later, ->nick()
+is not updated.
+
+=head3 server
+
+The server we were instructed to connect to.
 
 =head1 Emitted Events
 
@@ -727,6 +750,12 @@ All IRC events are emitted as 'irc_$cmd' e.g. 'irc_005' (ISUPPORT) or
 'irc_mode' with a few notable exceptions, detailed below.
 
 C<$_[ARG0]> is the L<IRC::Message::Object>.
+
+=head2 irc_connector_killed
+
+Emitted if a connection is terminated during L</preregister>.
+
+C<$_[ARG0]> is the L<POEx::IRC::Backend::Connect> object.
 
 =head2 irc_private_message
 
@@ -799,5 +828,13 @@ L<MooX::Role::Pluggable>
 =head1 AUTHOR
 
 Jon Portnoy <avenj@cobaltirc.org>
+
+=begin Pod::Coverage
+
+  BUILD
+  N_(?i:[A-Z0-9_])+
+  ircsock_(?i:[A-Z_])+
+
+=end Pod::Coverage
 
 =cut
