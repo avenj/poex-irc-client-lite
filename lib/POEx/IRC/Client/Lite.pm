@@ -783,6 +783,14 @@ Emitted for incoming CTCP replies.
 
 Mirrors the behavior of L</irc_ctcp_TYPE>
 
+=head2 irc_disconnected
+
+Emitted when an IRC connection has been disconnected at the backend.
+
+C<$_[ARG0]> is the disconnect string from L<POEx::IRC::Backend>.
+
+C<$_[ARG1]> is the L<POEx::IRC::Backend::Connect> that was disconnected.
+
 =head1 Pluggable Events
 
 These are events explicitly dispatched to plugins 

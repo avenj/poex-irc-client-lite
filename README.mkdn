@@ -273,6 +273,14 @@ Emitted for incoming CTCP replies.
 
 Mirrors the behavior of ["irc\_ctcp\_TYPE"](#irc\_ctcp\_TYPE)
 
+## irc\_disconnected
+
+Emitted when an IRC connection has been disconnected at the backend.
+
+`$_[ARG0]` is the disconnect string from [POEx::IRC::Backend](http://search.cpan.org/perldoc?POEx::IRC::Backend).
+
+`$_[ARG1]` is the [POEx::IRC::Backend::Connect](http://search.cpan.org/perldoc?POEx::IRC::Backend::Connect) that was disconnected.
+
 # Pluggable Events
 
 These are events explicitly dispatched to plugins 
