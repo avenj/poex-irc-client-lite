@@ -180,7 +180,7 @@ sub stop {
 ### ircsock_*
 
 sub ircsock_connector_open {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my $conn = $_[ARG0];
 
   $self->_set_conn( $conn );
@@ -220,9 +220,9 @@ sub ircsock_connector_open {
 }
 
 sub ircsock_connector_failure {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
-  my $connector = $_[ARG0];
-  my ($op, $errno, $errstr) = @_[ARG1 .. ARG3];
+  my (undef, $self) = @_[KERNEL, OBJECT];
+  #my $connector = $_[ARG0];
+  #my ($op, $errno, $errstr) = @_[ARG1 .. ARG3];
 
   $self->_clear_conn if $self->_has_conn;
 
@@ -233,17 +233,17 @@ sub ircsock_connector_failure {
 }
 
 sub ircsock_disconnect {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my ($conn, $str) = @_[ARG0, ARG1];
   
   $self->_clear_conn if $self->_has_conn; 
  
-  $self->emit( 'irc_disconnected', $str );
+  $self->emit( 'irc_disconnected', $str, $conn );
 }
 
 sub ircsock_input {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
-  my ($conn, $ircev) = @_[ARG0, ARG1];
+  my (undef, $self) = @_[KERNEL, OBJECT];
+  my $ircev = $_[ARG1];
 
   return unless $ircev->command;
   $self->emit( 'irc_'.lc($ircev->command), $ircev)
@@ -334,7 +334,7 @@ sub connect {
 }
 
 sub _connect {
-  my ($kern, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   
   $self->backend->create_connector(
     remoteaddr => $self->server,
@@ -354,7 +354,7 @@ sub disconnect {
 }
 
 sub _disconnect {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my $message = $_[ARG0] // 'Leaving';
 
   $self->backend->send(
@@ -380,7 +380,7 @@ sub send {
 }
 
 sub _send {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   for my $outev (@_[ARG0 .. $#_]) {
     if ($self->process( 'outgoing', $outev ) == EAT_ALL) {
       next
@@ -396,7 +396,7 @@ sub notice {
 }
 
 sub _notice {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self)   = @_[KERNEL, OBJECT];
   my ($target, @data) = @_[ARG0 .. $#_];
   $self->send(
     ircmsg(
@@ -412,7 +412,7 @@ sub privmsg {
 }
 
 sub _privmsg {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my ($target, @data) = @_[ARG0 .. $#_];
   $self->send(
     ircmsg(
@@ -428,7 +428,7 @@ sub ctcp {
 }
 
 sub _ctcp {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my ($type, $target, @data) = @_[ARG0 .. $#_];
   my $line = join ' ', uc($type), @data;
   my $quoted = ctcp_quote($line);
@@ -446,7 +446,7 @@ sub mode {
 }
 
 sub _mode {
-  my ($kernel, $self)    = @_[KERNEL, OBJECT];
+  my (undef, $self)    = @_[KERNEL, OBJECT];
   my ($target, $mode) = @_[ARG0, ARG1];
 
   if (blessed $mode && $mode->isa('IRC::Mode::Set')) {
@@ -474,7 +474,7 @@ sub join {
 }
 
 sub _join {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self) = @_[KERNEL, OBJECT];
   my $join_to = CORE::join ',', @_[ARG0 .. $#_];
   $self->send(
     ircmsg(
@@ -490,7 +490,7 @@ sub part {
 }
 
 sub _part {
-  my ($kernel, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self)   = @_[KERNEL, OBJECT];
   my ($channel, $msg) = @_[ARG0, ARG1];
   $self->send(
     ircmsg(
@@ -515,7 +515,7 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
   use POEx::IRC::Client::Lite;
   use IRC::Toolkit;
 
-  my @channels = ( '#otw', '#eris' );
+  our @channels = ( '#otw', '#eris' );
 
   POE::Session->create(
     package_states => [
@@ -533,9 +533,9 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
 
     $heap->{irc} = POEx::IRC::Client::Lite->new(
       event_prefix => 'recv_',
-      server  => $server,
-      nick    => $nickname,
-      username => $username,
+      server  => "irc.perl.org",
+      nick    => "MyNick",
+      username => "myuser",
     );
 
     $heap->{irc}->connect;

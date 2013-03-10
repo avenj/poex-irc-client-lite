@@ -9,7 +9,7 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     use POEx::IRC::Client::Lite;
     use IRC::Toolkit;
 
-    my @channels = ( '#otw', '#eris' );
+    our @channels = ( '#otw', '#eris' );
 
     POE::Session->create(
       package_states => [
@@ -27,9 +27,9 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
 
     $heap->{irc} = POEx::IRC::Client::Lite->new(
       event_prefix => 'recv_',
-      server  => $server,
-      nick    => $nickname,
-      username => $username,
+      server  => "irc.perl.org",
+      nick    => "MyNick",
+      username => "myuser",
     );
 
       $heap->{irc}->connect;
