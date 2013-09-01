@@ -412,7 +412,7 @@ sub privmsg {
 }
 
 sub _privmsg {
-  my (undef, $self) = @_[KERNEL, OBJECT];
+  my (undef, $self)   = @_[KERNEL, OBJECT];
   my ($target, @data) = @_[ARG0 .. $#_];
   $self->send(
     ircmsg(
