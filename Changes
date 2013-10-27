@@ -1,5 +1,15 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.002002 2013-10-27
+
+  - No significant code changes
+  
+  - Fix 'Changes' to conform to CPAN::Changes::Spec
+
+  - Switch to Type::Tiny
+
+  - Use namespace::clean
+
 0.002001 2013-03-17
 
   - Test tweaks + depend on newer POEx::IRC::Backend
