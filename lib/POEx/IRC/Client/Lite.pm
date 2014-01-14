@@ -230,7 +230,7 @@ sub ircsock_connector_failure {
 
   $self->emit( irc_connector_failed => @_[ARG0 .. $#_] );
   
-  $self->timer( $self->reconnect => 'connect') unless !$self->reconnect;
+  $self->timer( $self->reconnect => 'connect') if $self->reconnect;
 }
 
 sub ircsock_disconnect {
