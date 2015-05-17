@@ -53,8 +53,8 @@ has bindaddr => (
   predicate => 'has_bindaddr',
   default   => sub {
     my ($self) = @_;
-    return '::0' if $self->has_ipv6 and $self->ipv6;
-    '0.0.0.0'
+    $self->has_ipv6 && $self->ipv6 ? 
+      '::0' : '0.0.0.0'
   },
 );
 
@@ -117,14 +117,12 @@ has backend => (
   lazy    => 1,
   is      => 'ro',
   isa     => InstanceOf['POEx::IRC::Backend'],
-  builder => '_build_backend',
-);
+  builder => sub {
+    my $filter = POE::Filter::IRCv3->new(colonify => 0);
+    POEx::IRC::Backend->new(filter_irc => $filter)
+  }
 
-sub _build_backend {
-  my ($self) = @_;
-  my $filter = POE::Filter::IRCv3->new(colonify => 0);
-  POEx::IRC::Backend->new(filter_irc => $filter)
-}
+);
 
 has conn => (
   lazy      => 1,
@@ -238,7 +236,7 @@ sub ircsock_disconnect {
   my ($conn, $str)  = @_[ARG0, ARG1];
   
   $self->_clear_conn if $self->_has_conn; 
- 
+
   $self->emit( irc_disconnected => $str, $conn );
 }
 
@@ -298,6 +296,9 @@ sub N_irc_privmsg {
   }
 
   my $prefix = substr $ircev->params->[0], 0, 1;
+  ## FIXME
+  ##   parse isupports as we get them, attempt to find chan prefixes
+  ##   attrib defaulting to following:
   if (grep {; $_ eq $prefix } ('#', '&', '+') ) {
     $self->emit_now( irc_public_msg => $ircev )
   } else {
@@ -577,8 +578,9 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
 
 =head1 DESCRIPTION
 
-A light-weight, pluggable IRC client library using L<POEx::IRC::Backend> and
-L<IRC::Toolkit>.
+A very thin (but pluggable / extensible) IRC client library using
+L<POEx::IRC::Backend> and L<IRC::Toolkit> on top of
+L<MooX::Role::POE::Emitter> and L<MooX::Role::Pluggable>.
 
 No state is maintained; POEx::IRC::Client::Lite provides a
 minimalist interface to IRC and serves as a base class for stateful clients.
@@ -616,6 +618,18 @@ Remote port to use (defaults to 6667).
 =item reconnect
 
 Reconnection attempt delay, in seconds.
+
+B<< Automatic reconnection is only triggered when an outgoing connector fails!
+>>
+
+You can trigger a reconnection in your own code by handling
+L</irc_disconnected> events. For example:
+
+  sub irc_disconnected {
+    # Immediate reconnect; you may want to use a timer (to avoid being banned)
+    # Assuming our IRC component's object lives in our session's HEAP:
+    $_[HEAP]->{irc}->connect
+  }
 
 =back
 
