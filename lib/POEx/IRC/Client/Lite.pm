@@ -23,6 +23,12 @@ use namespace::clean;
 use Moo;
 with 'MooX::Role::POE::Emitter';
 
+
+=for Pod::Coverage has_(\w+)
+
+=cut
+
+
 has server => (
   required  => 1,
   is        => 'ro',
