@@ -1,5 +1,6 @@
 package POEx::IRC::Client::Lite;
-use strictures 1;
+
+use strictures 2;
 
 use Carp 'confess';
 
@@ -19,7 +20,6 @@ use Types::Standard -all;
 use MooX::Role::Pluggable::Constants;
 
 
-use namespace::clean;
 use Moo;
 with 'MooX::Role::POE::Emitter';
 
