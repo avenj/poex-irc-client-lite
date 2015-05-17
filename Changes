@@ -1,5 +1,16 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.002003 2015-03-17
+
+  - Fix reconnect behavior when a disconnect is called while awaiting
+    a successful connection
+
+  - 'use strictures 2' for fatal saner warnings behavior
+
+  - Drop namespace::clean
+
+  - Depend on a more modern Moo
+
 0.002002 2013-10-27
 
   - No significant code changes
