@@ -354,7 +354,7 @@ sub disconnect {
 }
 
 sub _disconnect {
-  my (undef, $self) = @_[KERNEL, OBJECT];
+  my ($kernel, $self) = @_[KERNEL, OBJECT];
   my $message = $_[ARG0] // 'Leaving';
 
   $self->backend->send(
@@ -364,6 +364,9 @@ sub _disconnect {
     ),
     $self->conn->wheel_id
   );
+
+  $kernel->alarm('connect');
+
   $self->backend->disconnect( $self->conn->wheel->ID )
     if $self->_has_conn and $self->conn->has_wheel;
 }
