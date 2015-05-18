@@ -238,4 +238,8 @@ for my $t (keys %$expected) {
   );
 }
 
+unless (keys %$expected == keys %$got) {
+  diag explain $got
+}
+
 done_testing;
