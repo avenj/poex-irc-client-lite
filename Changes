@@ -1,5 +1,10 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.002004 2015-03-18
+
+  - Depend on a more modern Perl to fix <=5.14 test failures
+    (unless someone cares enough to send a PR ...)
+
 0.002003 2015-03-17
 
   - Fix reconnect behavior when a disconnect is called while awaiting
