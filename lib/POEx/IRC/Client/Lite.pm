@@ -769,27 +769,47 @@ The server we were instructed to connect to.
 
 =head1 Emitted Events
 
+=head2 IRC events
+
 All IRC events are emitted as 'irc_$cmd' e.g. 'irc_005' (ISUPPORT) or
 'irc_mode' with a few notable exceptions, detailed below.
 
 C<$_[ARG0]> is the L<IRC::Message::Object>.
 
-=head2 irc_connector_killed
+=head2 Special events
+
+=head3 irc_connected
+
+Emitted when a connection has been successfully opened.
+
+This does not indicate successful server registration, only that the
+connection has been opened and registration details have been sent.
+
+C<$_[ARG0]> is the L<POEx::IRC::Backend::Connect> object.
+
+=head3 irc_connector_failed
+
+Emitted if an outgoing connection could not be established.
+
+C<< @_[ARG0 .. ARG3] >> are the operation, errno, and error string passed in
+by L<POEx::IRC::Backend>; see L<POEx::IRC::Backend/ircsock_connector_failure>.
+
+=head3 irc_connector_killed
 
 Emitted if a connection is terminated during L</preregister>.
 
 C<$_[ARG0]> is the L<POEx::IRC::Backend::Connect> object.
 
-=head2 irc_private_message
+=head3 irc_private_message
 
 Emitted for PRIVMSG-type messages not covered by L</irc_public_message>.
 
-=head2 irc_public_message
+=head3 irc_public_message
 
 Emitted for PRIVMSG-type messages that appear to be destined for a channel
 target.
 
-=head2 irc_ctcp_TYPE
+=head3 irc_ctcp_TYPE
 
 Emitted for incoming CTCP requests. TYPE is the request type, such as
 'version'
@@ -800,13 +820,13 @@ L<IRC::Toolkit::CTCP/ctcp_extract>.
 An example of sending a CTCP reply lives in L</SYNOPSIS>.
 See L<IRC::Toolkit::CTCP> for CTCP-related helpers.
 
-=head2 irc_ctcpreply_TYPE
+=head3 irc_ctcpreply_TYPE
 
 Emitted for incoming CTCP replies.
 
 Mirrors the behavior of L</irc_ctcp_TYPE>
 
-=head2 irc_disconnected
+=head3 irc_disconnected
 
 Emitted when an IRC connection has been disconnected at the backend.
 
