@@ -1,5 +1,9 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.002005 2015-06-07
+
+  - Document irc_connected & irc_connector_failed events
+
 0.002004 2015-03-18
 
   - Depend on a more modern Perl to fix <=5.14 test failures
