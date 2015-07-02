@@ -601,8 +601,7 @@ No state is maintained; POEx::IRC::Client::Lite provides a
 minimalist interface to IRC and serves as a base class for stateful clients.
 
 This is early development software pulled out of a much larger in-progress
-project.
-
+project. 
 B<< See L<POE::Component::IRC> for a more mature POE IRC client library. >>
 
 =head2 new
