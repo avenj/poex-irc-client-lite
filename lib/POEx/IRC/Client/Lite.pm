@@ -73,6 +73,14 @@ has ipv6 => (
   default   => sub { 0 },
 );
 
+has ssl => (
+  lazy      => 1,
+  is        => 'ro',
+  isa       => Bool,
+  writer    => 'set_ssl',
+  default   => sub { 0 },
+);
+
 has pass => (
   lazy      => 1,
   is        => 'ro',
@@ -346,6 +354,7 @@ sub _connect {
   $self->backend->create_connector(
     remoteaddr => $self->server,
     remoteport => $self->port,
+    ssl        => $self->ssl,
     (
       $self->has_ipv6 ? (ipv6 => $self->ipv6) : ()
     ),
@@ -620,6 +629,12 @@ Boolean value indicating whether to prefer IPv6.
 =item port
 
 Remote port to use (defaults to 6667).
+
+=item ssl
+
+Boolean value indicating whether to (attempt to) connect via SSL.
+
+Requires L<POE::Component::SSLify>.
 
 =item reconnect
 
