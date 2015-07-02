@@ -76,8 +76,7 @@ No state is maintained; POEx::IRC::Client::Lite provides a
 minimalist interface to IRC and serves as a base class for stateful clients.
 
 This is early development software pulled out of a much larger in-progress
-project.
-
+project. 
 **See [POE::Component::IRC](https://metacpan.org/pod/POE::Component::IRC) for a more mature POE IRC client library.**
 
 ## new
@@ -102,6 +101,12 @@ Create a new Client::Lite instance. Optional arguments are:
 - port
 
     Remote port to use (defaults to 6667).
+
+- ssl
+
+    Boolean value indicating whether to (attempt to) connect via SSL.
+
+    Requires [POE::Component::SSLify](https://metacpan.org/pod/POE::Component::SSLify).
 
 - reconnect
 

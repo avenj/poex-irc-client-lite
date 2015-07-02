@@ -1,5 +1,9 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.003001 2015-07-02
+
+  - Add 'ssl' attribute & pass to Backend
+
 0.002005 2015-06-07
 
   - Document irc_connected & irc_connector_failed events
