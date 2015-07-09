@@ -57,7 +57,7 @@ has bindaddr => (
   isa       => Defined,
   writer    => 'set_bindaddr',
   predicate => 'has_bindaddr',
-  default   => sub {
+  builder   => sub {
     my ($self) = @_;
     $self->has_ipv6 && $self->ipv6 ? 
       '::0' : '0.0.0.0'
@@ -70,7 +70,7 @@ has ipv6 => (
   isa       => Bool,
   writer    => 'set_ipv6',
   predicate => 'has_ipv6',
-  default   => sub { 0 },
+  builder   => sub { 0 },
 );
 
 has ssl => (
@@ -78,7 +78,7 @@ has ssl => (
   is        => 'ro',
   isa       => Bool,
   writer    => 'set_ssl',
-  default   => sub { 0 },
+  builder   => sub { 0 },
 );
 
 has ssl_opts => (
@@ -86,7 +86,7 @@ has ssl_opts => (
   is        => 'ro',
   isa       => Maybe[ArrayRef],
   writer    => 'set_ssl_opts',
-  default   => sub { undef },
+  builder   => sub { undef },
 );
 
 has pass => (
@@ -96,7 +96,7 @@ has pass => (
   writer    => 'set_pass',
   predicate => 'has_pass',
   clearer   => 'clear_pass',
-  default   => sub { '' },
+  builder   => sub { '' },
 );
 
 has port => (
@@ -105,7 +105,7 @@ has port => (
   isa       => Num,
   writer    => 'set_port',
   predicate => 'has_port',
-  default   => sub { 6667 },
+  builder   => sub { 6667 },
 );
 
 has realname => (
@@ -114,7 +114,7 @@ has realname => (
   isa       => Str,
   writer    => 'set_realname',
   predicate => 'has_realname',
-  default   => sub { __PACKAGE__ },
+  builder   => sub { __PACKAGE__ },
 );
 
 has reconnect => (
@@ -122,7 +122,7 @@ has reconnect => (
   is        => 'ro',
   isa       => Num,
   writer    => 'set_reconnect',
-  default   => sub { 120 },
+  builder   => sub { 120 },
 );
 
 has username => (
@@ -131,7 +131,7 @@ has username => (
   isa       => Str,
   writer    => 'set_username',
   predicate => 'has_username',
-  default   => sub { 'ircplug' },
+  builder   => sub { 'ircplug' },
 );
 
 ### Typically internal:
