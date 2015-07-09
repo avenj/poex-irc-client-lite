@@ -108,6 +108,14 @@ Create a new Client::Lite instance. Optional arguments are:
 
     Requires [POE::Component::SSLify](https://metacpan.org/pod/POE::Component::SSLify).
 
+- ssl\_opts
+
+    An `ARRAY` containing SSL options passed along to [POE::Component::SSLify](https://metacpan.org/pod/POE::Component::SSLify)
+    via [POEx::IRC::Backend](https://metacpan.org/pod/POEx::IRC::Backend); see [POE::Component::SSLify](https://metacpan.org/pod/POE::Component::SSLify) & [Net::SSLeay](https://metacpan.org/pod/Net::SSLeay).
+
+    Not required for basic SSL operation; setting ["ssl"](#ssl) to a true value should
+    work for most users.
+
 - reconnect
 
     Reconnection attempt delay, in seconds.
