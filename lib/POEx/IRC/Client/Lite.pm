@@ -81,6 +81,14 @@ has ssl => (
   default   => sub { 0 },
 );
 
+has ssl_opts => (
+  lazy      => 1,
+  is        => 'ro',
+  isa       => Maybe[ArrayRef],
+  writer    => 'set_ssl_opts',
+  default   => sub { undef },
+);
+
 has pass => (
   lazy      => 1,
   is        => 'ro',
@@ -183,7 +191,10 @@ sub BUILD {
 
 sub _emitter_started {
   my ($kernel, $self) = @_[KERNEL, OBJECT];
-  $kernel->post( $self->backend->spawn->session_id => 'register' );
+  $self->backend->spawn(
+    ( $self->ssl_opts ? (ssl_opts => $self->ssl_opts) : () ),
+  );
+  $kernel->post( $self->backend->session_id => 'register' );
 }
 
 sub stop {
@@ -634,6 +645,11 @@ Remote port to use (defaults to 6667).
 Boolean value indicating whether to (attempt to) connect via SSL.
 
 Requires L<POE::Component::SSLify>.
+
+=item ssl_opts
+
+An C<ARRAY> containing SSL options passed along to L<POE::Component::SSLify>
+via L<POEx::IRC::Backend>; see L<POE::Component::SSLify> & L<Net::SSLeay>.
 
 =item reconnect
 
