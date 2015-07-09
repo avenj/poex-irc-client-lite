@@ -651,6 +651,9 @@ Requires L<POE::Component::SSLify>.
 An C<ARRAY> containing SSL options passed along to L<POE::Component::SSLify>
 via L<POEx::IRC::Backend>; see L<POE::Component::SSLify> & L<Net::SSLeay>.
 
+Not required for basic SSL operation; setting L</ssl> to a true value should
+work for most users.
+
 =item reconnect
 
 Reconnection attempt delay, in seconds.
