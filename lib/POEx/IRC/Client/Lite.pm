@@ -485,7 +485,7 @@ sub _mode {
     ##       don't really want to parse/store isupport here
     ##       (stateful subclasses should worry about it)
     for my $set ($mode->split_mode_set(4)) {
-      $self->mode( $target, $set->mode_string )
+      $self->call( mode => $target, $set->mode_string )
     }
     return $self
   }
