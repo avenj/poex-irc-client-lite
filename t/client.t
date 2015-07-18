@@ -109,6 +109,9 @@ sub ircsock_listener_created {
     username => 'user',
   );
 
+  ok $poe_kernel->alias_resolve($heap->{client}->session_id),
+    'session_id set after new ok';
+
   $heap->{client}->connect;
 }
 

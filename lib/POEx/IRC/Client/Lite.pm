@@ -618,13 +618,17 @@ B<< See L<POE::Component::IRC> for a more mature POE IRC client library. >>
 =head2 new
 
   my $irc = POEx::IRC::Client::Lite->new(
+    # event_prefix comes from MooX::Role::POE::Emitter,
+    # defaults to 'recv_'
     event_prefix => $prefix,
     server    => $server,
     nick      => $nickname,
     username  => $username,
   );
 
-Create a new Client::Lite instance. Optional arguments are:
+Create a new Client::Lite instance. Optional arguments, in addition to
+attributes provided by L<MooX::Role::POE::Emitter> & L<MooX::Role::Pluggable>,
+are:
 
 =over
 
