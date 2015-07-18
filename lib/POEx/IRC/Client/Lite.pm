@@ -551,9 +551,9 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     package_states => [
       MyClient => [ qw/
         _start
-        recv_irc_001
-        recv_irc_public_msg
-        recv_irc_ctcp_version
+        emitted_irc_001
+        emitted_irc_public_msg
+        emitted_irc_ctcp_version
       / ],
     ],
   );
@@ -562,7 +562,6 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     my ($kern, $heap) = @_[KERNEL, HEAP];
 
     $heap->{irc} = POEx::IRC::Client::Lite->new(
-      event_prefix => 'recv_',
       server  => "irc.perl.org",
       nick    => "MyNick",
       username => "myuser",
@@ -571,7 +570,7 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     $heap->{irc}->connect;
   }
 
-  sub recv_irc_001 {
+  sub emitted_irc_001 {
     my ($kern, $heap) = @_[KERNEL, HEAP];
 
     $heap->{irc}->join(@channels)->privmsg(
@@ -579,7 +578,7 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     );
   }
 
-  sub recv_irc_public_msg {
+  sub emitted_irc_public_msg {
     my ($kern, $heap) = @_[KERNEL, HEAP];
     my $event = $_[ARG0];
 
@@ -591,7 +590,7 @@ POEx::IRC::Client::Lite - Minimalist POE IRC interface
     }
   }
 
-  sub recv_irc_ctcp_version {
+  sub emitted_irc_ctcp_version {
     my ($kern, $heap) = @_[KERNEL, HEAP];
     my $event = $_[ARG0];
 
@@ -619,7 +618,7 @@ B<< See L<POE::Component::IRC> for a more mature POE IRC client library. >>
 
   my $irc = POEx::IRC::Client::Lite->new(
     # event_prefix comes from MooX::Role::POE::Emitter,
-    # defaults to 'recv_'
+    # defaults to 'emitted_'
     event_prefix => $prefix,
     server    => $server,
     nick      => $nickname,
