@@ -3,22 +3,20 @@ package POEx::IRC::Client::Lite;
 use strictures 2;
 
 use Carp 'confess';
-
-use POE;
-use POEx::IRC::Backend;
-
-use IRC::Message::Object 'ircmsg';
-use IRC::Toolkit::Case;
-use IRC::Toolkit::CTCP;
-
-use POE::Filter::IRCv3;
-
 use Scalar::Util 'blessed';
 
-use Types::Standard -all;
+use IRC::Message::Object 'ircmsg';
+use IRC::Toolkit qw/ Case CTCP /;
+
+use List::Util 'any';
 
 use MooX::Role::Pluggable::Constants;
 
+use POE;
+use POEx::IRC::Backend;
+use POE::Filter::IRCv3;
+
+use Types::Standard -all;
 
 use Moo;
 with 'MooX::Role::POE::Emitter';
@@ -324,7 +322,7 @@ sub N_irc_privmsg {
   ## FIXME
   ##   parse isupports as we get them, attempt to find chan prefixes
   ##   attrib defaulting to following:
-  if (grep {; $_ eq $prefix } ('#', '&', '+') ) {
+  if (any {; $_ eq $prefix } ('#', '&', '+') ) {
     $self->emit_now( irc_public_msg => $ircev )
   } else {
     $self->emit_now( irc_private_msg => $ircev )
