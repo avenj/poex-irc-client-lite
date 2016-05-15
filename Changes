@@ -1,5 +1,13 @@
 # Changes for POEx::IRC::Client::Lite
 
+0.004002 2015-05-15
+
+  - POD fixes (miniCruzer)
+
+  - Add MooX::POE example bot
+
+  - Switch to 'cpanfile' dependency management
+
 0.004001 2015-07-09
 
   - Add 'ssl_opts' attribute
